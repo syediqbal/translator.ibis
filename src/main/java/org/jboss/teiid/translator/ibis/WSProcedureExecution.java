@@ -41,6 +41,7 @@ import javax.xml.ws.WebServiceException;
 import javax.xml.ws.handler.MessageContext;
 
 
+import org.teiid.core.types.XMLType;
 import org.teiid.language.Argument;
 import org.teiid.language.Call;
 import org.teiid.metadata.RuntimeMetadata;

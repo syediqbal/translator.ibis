@@ -30,6 +30,7 @@ import javax.xml.ws.Service.Mode;
 import javax.xml.ws.http.HTTPBinding;
 import javax.xml.ws.soap.SOAPBinding;
 
+import org.jboss.teiid.translator.ibis.execution.BinaryWSProcedureExecution;
 import org.teiid.core.BundleUtil;
 import org.teiid.language.Call;
 import org.teiid.metadata.MetadataFactory;

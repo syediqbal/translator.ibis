@@ -20,7 +20,7 @@
  * 02110-1301 USA.
  */
 
-package org.jboss.teiid.translator.ibis;
+package org.jboss.teiid.translator.ibis.execution;
 
 import java.sql.Blob;
 import java.sql.Clob;
@@ -35,6 +35,7 @@ import javax.xml.ws.Service.Mode;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.http.HTTPBinding;
 
+import org.jboss.teiid.translator.ibis.WSExecutionFactory;
 import org.teiid.core.types.ClobImpl;
 import org.teiid.core.types.InputStreamFactory;
 import org.teiid.language.Argument;

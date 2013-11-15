@@ -10,5 +10,7 @@
 	<classpathentry kind="lib" path="/tmp/eds/teiid/resources/runtime/deployers/teiid.deployer/teiid-metadata-7.7.5.jar"/>
 	<classpathentry kind="lib" path="/tmp/eds/teiid/resources/runtime/deployers/teiid.deployer/xom-1.2.jar"/>
 	<classpathentry kind="lib" path="/tmp/eds/teiid/resources/runtime/deployers/teiid.deployer/teiid-api-7.7.5.jar"/>
+	<classpathentry kind="lib" path="/tmp/eds/teiid/client/teiid-client.jar"/>
+	<classpathentry kind="lib" path="/tmp/eds/teiid/resources/runtime/deployers/teiid.deployer/teiid-engine-7.7.5.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
