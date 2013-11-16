@@ -39,7 +39,7 @@ public class IbisQueryExecution implements ResultSetExecution {
 	private int docNum = 0;
 	private int docIndex = 0;
 	private Class<?>[] expectedTypes;
-	private SolrExecutionFactory executionFactory;
+	private IbisExecutionFactory executionFactory;
 
 	public IbisQueryExecution(QueryExpression command,
 			ExecutionContext executionContext, RuntimeMetadata metadata,
