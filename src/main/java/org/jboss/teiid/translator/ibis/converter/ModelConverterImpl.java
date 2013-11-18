@@ -12,8 +12,18 @@ import org.teiid.translator.TranslatorException;
 
 public class ModelConverterImpl implements ModelConverter {
 
+    /*
+     * source model metadata that exposes source model definitions from the
+     * xmi files.
+     */
     private RuntimeMetadata sourceModelMetadata;
+
+    /*
+     * the column names specified in the "select [column list] from ..." SQL
+     * query.
+     */
     private List<DerivedColumn> columns;
+
     private Map<String, ConverterStrategy> converterStrategies;
 
     public ModelConverterImpl(RuntimeMetadata sourceModelMetadata,
