@@ -39,9 +39,11 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.handler.MessageContext;
+import javax.json.*;
 
 
 import org.teiid.core.types.XMLType;
+import org.teiid.core.types.basic.*;
 import org.teiid.language.Argument;
 import org.teiid.language.Call;
 import org.teiid.metadata.RuntimeMetadata;
@@ -81,7 +83,8 @@ public class WSProcedureExecution implements ProcedureExecution {
         
         String style = (String)arguments.get(0).getArgumentValue().getValue();
         String action = (String)arguments.get(1).getArgumentValue().getValue();
-        XMLType docObject = (XMLType)arguments.get(2).getArgumentValue().getValue();
+//        XMLType docObject = (XMLType)arguments.get(2).getArgumentValue().getValue();
+        JSON docObject = (JSON)arguments.get(2).getArgumentValue().getValue();
         StreamSource source = null;
     	try {
 	        source = convertToSource(docObject);
@@ -110,6 +113,7 @@ public class WSProcedureExecution implements ProcedureExecution {
 						throw new WebServiceException(WSExecutionFactory.UTIL.getString("http_usage_error")); //$NON-NLS-1$
 					}
 					try {
+						//will need to replace with json processor capabilities
 						Transformer t = TransformerFactory.newInstance().newTransformer();
 						StringWriter writer = new StringWriter();
 						//TODO: prevent this from being too large 
