@@ -1,6 +1,7 @@
-package org.jboss.teiid.translator.ibis.converter;
+package com.cnn.extractors;
 
-public interface JsonFieldResolver {
-
+public interface Extractor {
+	
     public <T> T resolve(String json, String teiidType, String nativeType, String jpath);
+
 }

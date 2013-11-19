@@ -10,6 +10,8 @@ import org.teiid.metadata.Column;
 import org.teiid.metadata.RuntimeMetadata;
 import org.teiid.translator.TranslatorException;
 
+import com.cnn.extractors.json.JsonExtractor;
+
 public class ModelConverterImpl implements ModelConverter {
 
     /*
@@ -27,16 +29,16 @@ public class ModelConverterImpl implements ModelConverter {
     /*
      * The resolver that
      */
-    private JsonFieldResolver jsonFieldResolver;
+    private JsonExtractor jsonExtractor;
 
     private Map<String, ConverterStrategy> converterStrategies;
 
     public ModelConverterImpl(RuntimeMetadata sourceModelMetadata,
-            List<DerivedColumn> columns, JsonFieldResolver jsonFieldResolver) {
+            List<DerivedColumn> columns, JsonExtractor jsonExtractor) {
 
         this.sourceModelMetadata = sourceModelMetadata;
         this.columns = columns;
-        this.jsonFieldResolver = jsonFieldResolver;
+        this.jsonExtractor = jsonExtractor;
 
         // low-priority TODO: discover through annotation instead of hard-coding
         converterStrategies = new HashMap<String, ConverterStrategy>();
@@ -55,7 +57,7 @@ public class ModelConverterImpl implements ModelConverter {
             // If latter, we need to "borrow" the code to get the short name
             // available in the Solr translator.
             Column sourceModelColumn = sourceModelMetadata.getColumn(column.toString());
-            Object rawValue = jsonFieldResolver.resolve(
+            Object rawValue = jsonExtractor.resolve(
                 ibisModelJson,
                 sourceModelColumn.getRuntimeType(), // TODO how to get Teiid type?
                 sourceModelColumn.getNativeType(),
