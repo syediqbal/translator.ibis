@@ -24,13 +24,19 @@ public class ModelConverterImpl implements ModelConverter {
      */
     private List<DerivedColumn> columns;
 
+    /*
+     * The resolver that
+     */
+    private JsonFieldResolver jsonFieldResolver;
+
     private Map<String, ConverterStrategy> converterStrategies;
 
     public ModelConverterImpl(RuntimeMetadata sourceModelMetadata,
-            List<DerivedColumn> columns) {
+            List<DerivedColumn> columns, JsonFieldResolver jsonFieldResolver) {
 
         this.sourceModelMetadata = sourceModelMetadata;
         this.columns = columns;
+        this.jsonFieldResolver = jsonFieldResolver;
 
         // low-priority TODO: discover through annotation instead of hard-coding
         converterStrategies = new HashMap<String, ConverterStrategy>();
@@ -49,10 +55,12 @@ public class ModelConverterImpl implements ModelConverter {
             // If latter, we need to "borrow" the code to get the short name
             // available in the Solr translator.
             Column sourceModelColumn = sourceModelMetadata.getColumn(column.toString());
-            String nativeType = sourceModelColumn.getNativeType();
-            String jpath = sourceModelColumn.getNameInSource();
-            Object rawValue = getRawValue(ibisModelJson, jpath);
-            ConverterStrategy strategy = converterStrategies.get(nativeType);
+            Object rawValue = jsonFieldResolver.resolve(
+                ibisModelJson,
+                sourceModelColumn.getRuntimeType(), // TODO how to get Teiid type?
+                sourceModelColumn.getNativeType(),
+                sourceModelColumn.getNameInSource());
+            ConverterStrategy strategy = converterStrategies.get(sourceModelColumn.getNativeType());
             // TODO May need additional type-based conversion to adhere to
             // the expected type of the column.
             Object convertedValue = strategy != null ?
@@ -63,10 +71,4 @@ public class ModelConverterImpl implements ModelConverter {
 
         return row;
     }
-
-    private Object getRawValue(String ibisModelJson, String jpath) {
-        // TODO Use jpath to resolve the value.
-        return null;
-    }
-
 }
