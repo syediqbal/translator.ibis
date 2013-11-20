@@ -33,6 +33,11 @@ public class JsonExtractorTest {
 	public void testResolveEmptyStringJPath(){
 		Assert.assertNull(jsonExtractor.resolve(JSON, ""));
 	}
+	
+	@Test
+	public void testResolveWithBadJPath(){
+		Assert.assertNull(jsonExtractor.resolve(JSON, "somepath"));
+	}
 
 	@Test
 	public void testResolveGoodString(){

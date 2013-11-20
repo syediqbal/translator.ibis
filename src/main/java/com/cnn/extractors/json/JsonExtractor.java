@@ -11,8 +11,8 @@ public class JsonExtractor implements Extractor {
 	public JsonExtractor (){}
 	
 	/**
-	 * Takes a piece of JSON, locates a node using the jpath argument, determines
-	 * what java type it is, and returns appropriately.
+	 * Takes a piece of JSON, locates a node using the jpath argument
+	 * and returns it or null if there is a problem.
 	 * 
 	 * @param json
 	 * @param teiidType
@@ -33,111 +33,5 @@ public class JsonExtractor implements Extractor {
 		}
 		return data;
 	}
-	
-	/**
-	 * Validates the actual returned type to what the source definition says it 
-	 * should be. Checks the source definition type and routes appropriately.
-	 * 
-	 * @param nativeType
-	 * @param dataObj
-	 * @return
-	 */
-	/*private Boolean validateData (String nativeType, Object dataObj) throws ClassCastException {
-		if (nativeType.equalsIgnoreCase("String")){
-			return validateString(dataObj);
-		} else if (nativeType.equalsIgnoreCase("Number")){
-			return validateNumber(dataObj);
-		} else if (nativeType.equalsIgnoreCase("Boolean")){
-			return validateBoolean(dataObj);
-		} else if (nativeType.equalsIgnoreCase("Array")){
-			return validateArray(dataObj);
-		} else if (nativeType.equalsIgnoreCase("Object")){
-			return validateObject(dataObj);
-		} else {
-			throw new ClassCastException("jpath expression is not evaluating to a known JSON type!");
-		}
-	}*/
-	
-	/**
-	 * Validates that the actual return type is a String.
-	 * 
-	 * @param dataObj
-	 * @return
-	 */
-	/*private Boolean validateString (Object dataObj) throws ClassCastException {
-		if (!(dataObj instanceof String)){
-			throw new ClassCastException("The result of the jpath expression is not evaluating to a String!");
-		}
-		return true;
-	}*/
-	
-	/**
-	 * Validates that the actual return type is a Number.
-	 * 
-	 * @param dataObj
-	 * @return
-	 */
-	/*private Boolean validateNumber (Object dataObj) throws ClassCastException {
-		if (!(dataObj instanceof Number)){
-			throw new ClassCastException("The result of the jpath expression is not evaluating to a Number!");
-		}
-		return true;
-	}*/
-	
-	/**
-	 * Validates that the actual return type is a Boolean.
-	 * 
-	 * @param dataObj
-	 * @return
-	 */
-	/*private Boolean validateBoolean (Object dataObj) throws ClassCastException {
-		if (!(dataObj instanceof Boolean)){
-			throw new ClassCastException("The result of the jpath expression is not evaluating to a Boolean!");
-		}
-		return true;
-	}*/
-	
-	/**
-	 * Validates that the actual return type is a Array.
-	 * 
-	 * @param dataObj
-	 * @return
-	 */
-	/*private Boolean validateArray (Object dataObj) throws ClassCastException {
-		if (!(dataObj instanceof String)){
-			throw new ClassCastException("The result of the jpath expression is not evaluating to an Array!");
-		}
-		return true;
-	}*/
-	
-	/**
-	 * Validates that the actual return type is a Object.
-	 * 
-	 * @param dataObj
-	 * @return
-	 */
-	/*private Boolean validateObject (Object dataObj) throws ClassCastException {
-		if (!(dataObj instanceof String)){
-			throw new ClassCastException("The result of the jpath expression is not evaluating to an Object!");
-		}
-		return true;
-	}*/
-	
-	/**
-	 * Validates the method parameters.
-	 * 
-	 * @param json
-	 * @param teiidType
-	 * @param nativeType
-	 * @param jpath
-	 * @return
-	 */
-	/*private Boolean validateResolveMethodParams(String json, String teiidType, String nativeType, String jpath){
-		if ((json != null && !json.equals("")) && (teiidType != null && !teiidType.equals("")) && (nativeType != null && !nativeType.equals("")) && (jpath != null && !jpath.equals(""))){
-			return true;
-		} else {
-			return false;
-		}
-	}*/
 
 }
