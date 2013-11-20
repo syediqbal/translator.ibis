@@ -31,7 +31,7 @@ public class ModelConverterImpl implements ModelConverter {
      */
     private JsonExtractor jsonExtractor;
 
-    private Map<ConverterStrategyTypeTuple, ConverterStrategy> converterStrategies;
+    private Map<ConverterStrategyKey, ConverterStrategy> converterStrategies;
 
     public ModelConverterImpl(RuntimeMetadata sourceModelMetadata,
             List<DerivedColumn> columns, JsonExtractor jsonExtractor) {
@@ -41,7 +41,7 @@ public class ModelConverterImpl implements ModelConverter {
         this.jsonExtractor = jsonExtractor;
 
         // low-priority TODO: discover through annotation instead of hard-coding
-        converterStrategies = new HashMap<ConverterStrategyTypeTuple, ConverterStrategy>();
+        converterStrategies = new HashMap<ConverterStrategyKey, ConverterStrategy>();
         addConverterStrategy(new StringStrategy());
         addConverterStrategy(new NumberStrategy());
         addConverterStrategy(new BooleanStrategy());
@@ -78,14 +78,14 @@ public class ModelConverterImpl implements ModelConverter {
     }
 
     private void addConverterStrategy(ConverterStrategy strategy) {
-        ConverterStrategyTypeTuple key = new ConverterStrategyTypeTuple(
+        ConverterStrategyKey key = new ConverterStrategyKey(
             strategy.getSupportedTeiidType(), strategy.getSupportedNativeType());
         converterStrategies.put(key, strategy);
     }
 
     private ConverterStrategy findConverterStrategy(String teiidType, String ibisTypeStr) {
         NativeTypes ibisType = NativeTypes.valueOf(ibisTypeStr.toUpperCase());
-        ConverterStrategyTypeTuple key = new ConverterStrategyTypeTuple(teiidType, ibisType);
+        ConverterStrategyKey key = new ConverterStrategyKey(teiidType, ibisType);
         return converterStrategies.get(key);
     }
 }

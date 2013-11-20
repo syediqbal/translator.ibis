@@ -1,11 +1,18 @@
 package org.jboss.teiid.translator.ibis.converter;
 
-public class ConverterStrategyTypeTuple {
+/**
+ * This is the lookup key for the map that contains a number of converter
+ * strategies.
+ *
+ * @author ntan
+ *
+ */
+public class ConverterStrategyKey {
 
     private String teiidType;
     private NativeTypes ibisType;
 
-    public ConverterStrategyTypeTuple(String teiidType, NativeTypes ibisType) {
+    public ConverterStrategyKey(String teiidType, NativeTypes ibisType) {
         this.teiidType = teiidType;
         this.ibisType = ibisType;
     }
@@ -29,7 +36,7 @@ public class ConverterStrategyTypeTuple {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        ConverterStrategyTypeTuple other = (ConverterStrategyTypeTuple) obj;
+        ConverterStrategyKey other = (ConverterStrategyKey) obj;
         if (ibisType != other.ibisType)
             return false;
         if (teiidType == null) {
