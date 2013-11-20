@@ -12,14 +12,19 @@ package org.jboss.teiid.translator.ibis.converter;
  * @author ntan
  *
  */
-public interface ConverterStrategy {
+public abstract class ConverterStrategy {
 
     /**
      * Return the native type (e.g. "rich_text") supported by this strategy.
      *
      * @return
      */
-    public String getSupportedNativeType();
+    abstract public NativeTypes getSupportedNativeType();
+
+    /**
+     * Return the Teiid type (e.g. "string") supported by this strategy.
+     */
+    abstract public String getSupportedTeiidType();
 
     /**
      * Given the source data, return the canonicalized model.
@@ -27,5 +32,12 @@ public interface ConverterStrategy {
      * @param jsonValue
      * @return
      */
-    public Object convert(Object json);
+    abstract public Object convert(Object json) throws ConversionException;
+
+    protected void validate(Class<?> expectedType, Object actualValue) throws ConversionException {
+        if (!(expectedType.isInstance(actualValue))) {
+            throw new ConversionException(
+                expectedType.getCanonicalName(), actualValue.getClass().getCanonicalName());
+        }
+    }
 }

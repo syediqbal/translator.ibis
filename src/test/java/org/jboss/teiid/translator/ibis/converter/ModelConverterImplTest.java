@@ -52,7 +52,7 @@ public class ModelConverterImplTest {
         when(column4.getRuntimeType()).thenReturn("string");
         when(column1.getNativeType()).thenReturn("string");
         when(column2.getNativeType()).thenReturn("string");
-        when(column3.getNativeType()).thenReturn(RichTextStrategy.TYPE);
+        when(column3.getNativeType()).thenReturn(NativeTypes.RICH_TEXT.toString().toLowerCase());
         when(column4.getNativeType()).thenReturn("string");
         when(column1.getNameInSource()).thenReturn("_id");
         when(column2.getNameInSource()).thenReturn("_rev");
@@ -66,19 +66,21 @@ public class ModelConverterImplTest {
         when(jsonExtractor.resolve(jsonDoc, "_id")).thenReturn("section_1");
         when(jsonExtractor.resolve(jsonDoc, "_rev")).thenReturn("rev_1");
         when(jsonExtractor.resolve(jsonDoc, "seo.description")).thenReturn("description_1");
+        Map<String, Object> description = new HashMap<String, Object>();
+        description.put("paragraphs", new ArrayList<Object>());
+        when(jsonExtractor.resolve(jsonDoc, "seo.description")).thenReturn(description);
 
         converter = new ModelConverterImpl(sourceModelMetadata, derivedColumns, jsonExtractor);
     }
 
     @Test
-    public void testConverter() throws TranslatorException {
+    public void testConverter() throws TranslatorException, ConversionException {
 
         List<?> row = converter.convertToTeiid(jsonDoc);
 
         verify(jsonExtractor).resolve(jsonDoc, "_id");
         verify(jsonExtractor).resolve(jsonDoc, "_rev");
         verify(jsonExtractor).resolve(jsonDoc, "seo.description");
-
 
         Assert.assertEquals(3, row.size());
         Assert.assertEquals("section_1", row.get(0));

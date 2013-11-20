@@ -31,7 +31,7 @@ public class ModelConverterImpl implements ModelConverter {
      */
     private JsonExtractor jsonExtractor;
 
-    private Map<String, ConverterStrategy> converterStrategies;
+    private Map<ConverterStrategyTypeTuple, ConverterStrategy> converterStrategies;
 
     public ModelConverterImpl(RuntimeMetadata sourceModelMetadata,
             List<DerivedColumn> columns, JsonExtractor jsonExtractor) {
@@ -41,14 +41,17 @@ public class ModelConverterImpl implements ModelConverter {
         this.jsonExtractor = jsonExtractor;
 
         // low-priority TODO: discover through annotation instead of hard-coding
-        converterStrategies = new HashMap<String, ConverterStrategy>();
-        ConverterStrategy richTextStrategy = new RichTextStrategy();
-        converterStrategies.put(richTextStrategy.getSupportedNativeType(),
-            richTextStrategy);
+        converterStrategies = new HashMap<ConverterStrategyTypeTuple, ConverterStrategy>();
+        addConverterStrategy(new StringStrategy());
+        addConverterStrategy(new NumberStrategy());
+        addConverterStrategy(new BooleanStrategy());
+        addConverterStrategy(new ObjectStrategy());
+        addConverterStrategy(new ArrayStrategy());
+        addConverterStrategy(new RichTextStrategy());
     }
 
     @Override
-    public List<?> convertToTeiid(String ibisModelJson) throws TranslatorException {
+    public List<?> convertToTeiid(String ibisModelJson) throws TranslatorException, ConversionException {
 
         List<Object> row = new ArrayList<Object>();
 
@@ -60,15 +63,29 @@ public class ModelConverterImpl implements ModelConverter {
             Object rawValue = jsonExtractor.resolve(
                 ibisModelJson,
                 sourceModelColumn.getNameInSource());
-            ConverterStrategy strategy = converterStrategies.get(sourceModelColumn.getNativeType());
-            // TODO May need additional type-based conversion to adhere to
-            // the expected type of the column.
-            Object convertedValue = strategy != null ?
-                strategy.convert(rawValue) :
-                rawValue;
+            ConverterStrategy strategy = findConverterStrategy(
+                sourceModelColumn.getRuntimeType(), sourceModelColumn.getNativeType());
+            if (strategy == null) {
+                throw new IllegalArgumentException("No converter strategy available for {" +
+                    sourceModelColumn.getRuntimeType() + " <= " +
+                    sourceModelColumn.getNativeType() + "}");
+            }
+            Object convertedValue = strategy.convert(rawValue);
             row.add(convertedValue);
         }
 
         return row;
+    }
+
+    private void addConverterStrategy(ConverterStrategy strategy) {
+        ConverterStrategyTypeTuple key = new ConverterStrategyTypeTuple(
+            strategy.getSupportedTeiidType(), strategy.getSupportedNativeType());
+        converterStrategies.put(key, strategy);
+    }
+
+    private ConverterStrategy findConverterStrategy(String teiidType, String ibisTypeStr) {
+        NativeTypes ibisType = NativeTypes.valueOf(ibisTypeStr.toUpperCase());
+        ConverterStrategyTypeTuple key = new ConverterStrategyTypeTuple(teiidType, ibisType);
+        return converterStrategies.get(key);
     }
 }

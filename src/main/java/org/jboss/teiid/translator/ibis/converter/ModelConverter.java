@@ -20,5 +20,5 @@ public interface ModelConverter {
      * @return List of { columnName, columnValue } tuples
      * @throws TranslatorException
      */
-    public List<?> convertToTeiid(String ibisModelJson) throws TranslatorException;
+    public List<?> convertToTeiid(String ibisModelJson) throws TranslatorException, ConversionException;
 }
