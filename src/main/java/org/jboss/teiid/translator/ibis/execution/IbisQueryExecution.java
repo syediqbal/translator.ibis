@@ -6,11 +6,11 @@ import java.util.List;
 
 import javax.resource.cci.ResultSet;
 
-import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.impl.HttpSolrServer;
-import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.common.SolrDocument;
-import org.apache.solr.common.SolrDocumentList;
+//import org.apache.solr.client.solrj.SolrQuery;
+//import org.apache.solr.client.solrj.impl.HttpSolrServer;
+//import org.apache.solr.client.solrj.response.QueryResponse;
+//import org.apache.solr.common.SolrDocument;
+//import org.apache.solr.common.SolrDocumentList;
 import org.teiid.language.DerivedColumn;
 import org.teiid.language.QueryExpression;
 import org.teiid.language.Select;
@@ -20,8 +20,8 @@ import org.teiid.translator.DataNotAvailableException;
 import org.teiid.translator.ExecutionContext;
 import org.teiid.translator.ResultSetExecution;
 import org.teiid.translator.TranslatorException;
-import org.teiid.translator.solr.SolrConnection;
-import org.teiid.translator.solr.SolrExecutionFactory;
+import org.jboss.teiid.translator.ibis.execution.IbisConnection;
+import org.jboss.teiid.translator.ibis.IbisExecutionFactory;
 
 public class IbisQueryExecution implements ResultSetExecution {
 
@@ -29,7 +29,7 @@ public class IbisQueryExecution implements ResultSetExecution {
 	private Select query;
 	@SuppressWarnings("unused")
 	private ExecutionContext executionContext;
-	private SolrConnection connection;
+	private IbisConnection connection;
 	private IbisSQLHierarchyVistor visitor;
 	private LogManager logger;
 	private SolrQuery params = new SolrQuery();

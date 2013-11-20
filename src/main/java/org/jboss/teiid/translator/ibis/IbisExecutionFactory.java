@@ -5,8 +5,9 @@ import java.math.BigInteger;
 
 import javax.resource.cci.ConnectionFactory;
 
-import org.teiid.translator.solr.execution.SolrQueryExecution;
-import org.teiid.translator.solr.metadata.SolrMetadataProcessor;
+import org.jboss.teiid.translator.ibis.execution.IbisConnection;
+import org.jboss.teiid.translator.ibis.execution.IbisQueryExecution;
+import org.jboss.teiid.translator.ibis.metadata.IbisMetadataProcessor;
 import org.teiid.core.types.BlobImpl;
 import org.teiid.core.types.InputStreamFactory;
 import org.teiid.language.QueryExpression;
@@ -31,10 +32,10 @@ import org.teiid.translator.TranslatorException;
  */
 @Translator(name = "solr", description = "A translator for Solr search platform")
 public class IbisExecutionFactory extends
-		ExecutionFactory<ConnectionFactory, SolrConnection> {
+		ExecutionFactory<ConnectionFactory, IbisConnection> {
 
 	@Override
-	public SolrConnection getConnection(ConnectionFactory factory,
+	public IbisConnection getConnection(ConnectionFactory factory,
 			ExecutionContext executionContext) throws TranslatorException {
 		// TODO Auto-generated method stub
 		return super.getConnection(factory, executionContext);
@@ -56,8 +57,8 @@ public class IbisExecutionFactory extends
 	@Override
 	public ResultSetExecution createResultSetExecution(QueryExpression command,
 			ExecutionContext executionContext, RuntimeMetadata metadata,
-			SolrConnection connection) throws TranslatorException {
-		return new SolrQueryExecution(command, executionContext, metadata,
+			IbisConnection connection) throws TranslatorException {
+		return new IbisQueryExecution(command, executionContext, metadata,
 				connection);
 	}
 
