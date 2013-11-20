@@ -5,7 +5,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import junit.framework.Assert;
 
@@ -50,7 +52,7 @@ public class ModelConverterImplTest {
         when(column4.getRuntimeType()).thenReturn("string");
         when(column1.getNativeType()).thenReturn("string");
         when(column2.getNativeType()).thenReturn("string");
-        when(column3.getNativeType()).thenReturn("string");
+        when(column3.getNativeType()).thenReturn(RichTextStrategy.TYPE);
         when(column4.getNativeType()).thenReturn("string");
         when(column1.getNameInSource()).thenReturn("_id");
         when(column2.getNameInSource()).thenReturn("_rev");
@@ -61,9 +63,9 @@ public class ModelConverterImplTest {
         when(sourceModelMetadata.getColumn("rev")).thenReturn(column2);
         when(sourceModelMetadata.getColumn("description")).thenReturn(column3);
 
-        when(jsonExtractor.resolve(jsonDoc, "string", "string", "_id")).thenReturn("section_1");
-        when(jsonExtractor.resolve(jsonDoc, "string", "string", "_rev")).thenReturn("rev_1");
-        when(jsonExtractor.resolve(jsonDoc, "string", "string", "seo.description")).thenReturn("description_1");
+        when(jsonExtractor.resolve(jsonDoc, "_id")).thenReturn("section_1");
+        when(jsonExtractor.resolve(jsonDoc, "_rev")).thenReturn("rev_1");
+        when(jsonExtractor.resolve(jsonDoc, "seo.description")).thenReturn("description_1");
 
         converter = new ModelConverterImpl(sourceModelMetadata, derivedColumns, jsonExtractor);
     }
@@ -73,13 +75,14 @@ public class ModelConverterImplTest {
 
         List<?> row = converter.convertToTeiid(jsonDoc);
 
-        verify(jsonExtractor).resolve(jsonDoc, "string", "string", "_id");
-        verify(jsonExtractor).resolve(jsonDoc, "string", "string", "_rev");
-        verify(jsonExtractor).resolve(jsonDoc, "string", "string", "seo.description");
+        verify(jsonExtractor).resolve(jsonDoc, "_id");
+        verify(jsonExtractor).resolve(jsonDoc, "_rev");
+        verify(jsonExtractor).resolve(jsonDoc, "seo.description");
+
 
         Assert.assertEquals(3, row.size());
         Assert.assertEquals("section_1", row.get(0));
         Assert.assertEquals("rev_1", row.get(1));
-        Assert.assertEquals("description_1", row.get(2));
+        Assert.assertEquals("{paragraphs=[]}", row.get(2)); // TODO This is not the final stringified rich text we are going to store
     }
 }

@@ -59,8 +59,6 @@ public class ModelConverterImpl implements ModelConverter {
             Column sourceModelColumn = sourceModelMetadata.getColumn(column.toString());
             Object rawValue = jsonExtractor.resolve(
                 ibisModelJson,
-                sourceModelColumn.getRuntimeType(), // TODO how to get Teiid type?
-                sourceModelColumn.getNativeType(),
                 sourceModelColumn.getNameInSource());
             ConverterStrategy strategy = converterStrategies.get(sourceModelColumn.getNativeType());
             // TODO May need additional type-based conversion to adhere to
