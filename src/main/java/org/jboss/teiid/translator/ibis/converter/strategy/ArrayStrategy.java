@@ -1,6 +1,9 @@
-package org.jboss.teiid.translator.ibis.converter;
+package org.jboss.teiid.translator.ibis.converter.strategy;
 
 import java.util.List;
+
+import org.jboss.teiid.translator.ibis.converter.ConversionException;
+import org.jboss.teiid.translator.ibis.converter.NativeTypes;
 
 public class ArrayStrategy extends ConverterStrategy {
 
