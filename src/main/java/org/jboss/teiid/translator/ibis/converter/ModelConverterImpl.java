@@ -5,6 +5,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jboss.teiid.translator.ibis.converter.strategy.ArrayStrategy;
+import org.jboss.teiid.translator.ibis.converter.strategy.BooleanStrategy;
+import org.jboss.teiid.translator.ibis.converter.strategy.ConverterStrategy;
+import org.jboss.teiid.translator.ibis.converter.strategy.ConverterStrategyKey;
+import org.jboss.teiid.translator.ibis.converter.strategy.NumberStrategy;
+import org.jboss.teiid.translator.ibis.converter.strategy.ObjectStrategy;
+import org.jboss.teiid.translator.ibis.converter.strategy.RichTextStrategy;
+import org.jboss.teiid.translator.ibis.converter.strategy.StringStrategy;
 import org.teiid.language.DerivedColumn;
 import org.teiid.metadata.Column;
 import org.teiid.metadata.RuntimeMetadata;
@@ -60,9 +68,9 @@ public class ModelConverterImpl implements ModelConverter {
             // If latter, we need to "borrow" the code to get the short name
             // available in the Solr translator.
             Column sourceModelColumn = sourceModelMetadata.getColumn(column.toString());
-            Object rawValue = jsonExtractor.resolve(
-                ibisModelJson,
-                sourceModelColumn.getNameInSource());
+            if (sourceModelColumn == null) {
+                throw new RuntimeException("Cannot find in source model metadata a column named " + column);
+            }
             ConverterStrategy strategy = findConverterStrategy(
                 sourceModelColumn.getRuntimeType(), sourceModelColumn.getNativeType());
             if (strategy == null) {
@@ -70,6 +78,9 @@ public class ModelConverterImpl implements ModelConverter {
                     sourceModelColumn.getRuntimeType() + " <= " +
                     sourceModelColumn.getNativeType() + "}");
             }
+            Object rawValue = jsonExtractor.resolve(
+                ibisModelJson,
+                sourceModelColumn.getNameInSource());
             Object convertedValue = strategy.convert(rawValue);
             row.add(convertedValue);
         }
@@ -84,8 +95,13 @@ public class ModelConverterImpl implements ModelConverter {
     }
 
     private ConverterStrategy findConverterStrategy(String teiidType, String ibisTypeStr) {
-        NativeTypes ibisType = NativeTypes.valueOf(ibisTypeStr.toUpperCase());
-        ConverterStrategyKey key = new ConverterStrategyKey(teiidType, ibisType);
-        return converterStrategies.get(key);
+        try {
+            NativeTypes ibisType = NativeTypes.valueOf(ibisTypeStr.toUpperCase());
+            ConverterStrategyKey key = new ConverterStrategyKey(teiidType, ibisType);
+            return converterStrategies.get(key);
+        }
+        catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 }

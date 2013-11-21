@@ -1,17 +1,8 @@
 package org.jboss.teiid.translator.ibis.execution;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.resource.cci.ResultSet;
-
-//import org.apache.solr.client.solrj.SolrQuery;
-//import org.apache.solr.client.solrj.impl.HttpSolrServer;
-//import org.apache.solr.client.solrj.response.QueryResponse;
-//import org.apache.solr.common.SolrDocument;
-//import org.apache.solr.common.SolrDocumentList;
-import org.teiid.language.DerivedColumn;
 import org.teiid.language.QueryExpression;
 import org.teiid.language.Select;
 import org.teiid.logging.LogManager;
@@ -23,6 +14,11 @@ import org.teiid.translator.TranslatorException;
 import org.jboss.teiid.translator.ibis.IbisConnection;
 import org.jboss.teiid.translator.ibis.IbisExecutionFactory;
 
+/**
+ * @author Jason Marley, Red Hat, Inc.
+ * @author Syed Iqbal, Red Hat, Inc.
+ *
+ */
 public class IbisQueryExecution implements ResultSetExecution {
 
 	private RuntimeMetadata metadata;
@@ -31,13 +27,9 @@ public class IbisQueryExecution implements ResultSetExecution {
 	private ExecutionContext executionContext;
 	private IbisConnection connection;
 	private IbisSQLHierarchyVistor visitor;
-	private LogManager logger;
-	private SolrQuery params = new SolrQuery();
-	private QueryResponse queryResponse = null;
-	private List<DerivedColumn> fieldList = null;
-	private Iterator<SolrDocument> docItr;
-	private int docNum = 0;
-	private int docIndex = 0;
+	private String queryParams;
+	private List<String> queryResponse;
+	private Iterator<String> docItr;
 	private Class<?>[] expectedTypes;
 	private IbisExecutionFactory executionFactory;
 
@@ -75,30 +67,37 @@ public class IbisQueryExecution implements ResultSetExecution {
 		// sort clause
 		// setFields
 
-		// traverse commands
+		// translate sql query into ibis query string
 		this.visitor.visitNode(query);
 
 		// get query fields
 		// fieldList = this.visitor.getFieldNameList();
 
-		// add query Solr response fields
-		for (DerivedColumn field : fieldList) {
-			params.addField(visitor.getShortName((field.toString())));
-		}
-		
-		//set Solr Query
-		
-		params.setQuery(this.visitor.getTranslatedSQL());
-		
-		LogManager.logInfo("This is the solr query", params.getQuery());
+		/*
+		 * TODO to optimize query, look into returning specifying exactly which
+		 * columns to return. // add query Solr response fields for
+		 * (DerivedColumn field : fieldList) {
+		 * params.addField(visitor.getShortName((field.toString()))); }
+		 */
+
+		// get ibis query string
+		queryParams = this.visitor.getTranslatedSQL();
+
+		LogManager.logInfo("This is the ibis query", queryParams);
 		// TODO set offset
 		// TODO set row result limit
 		//
-		
-		// execute query and somewhere in here do translation
-		queryResponse = connection.executeQuery(params);
 
-		docItr = queryResponse.getResults().iterator(); // change to iterator?
+		// execute ibis query
+		try {
+			queryResponse = connection.executeQuery(queryParams);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			LogManager.logCritical("query execution issue", queryParams.toString());
+			e.printStackTrace();
+		}
+
+		docItr = queryResponse.iterator(); // change to iterator?
 														// how does iterator
 														// work?
 
@@ -121,23 +120,24 @@ public class IbisQueryExecution implements ResultSetExecution {
 	@Override
 	public List<?> next() throws TranslatorException, DataNotAvailableException {
 
-		final List<Object> row = new ArrayList<Object>();
-		String columnName;
+//		final List<Object> row = new ArrayList<Object>();
+//		String columnName;
 
 		// is there any solr docs
 		if (this.docItr != null && this.docItr.hasNext()) {
+			
+			LogManager.logInfo("this is json document in string format", this.docItr.toString());
+//			SolrDocument doc = this.docItr.next();
+//
+//			for (int i = 0; i < this.visitor.fieldNameList.size(); i++) {
+//				// TODO handle multiple tables
+//				columnName = this.visitor.getShortFieldName(i);
+//
+//				row.add(this.executionFactory.convertToTeiid(
+//						doc.getFieldValue(columnName), this.expectedTypes[i]));
+//			}
 
-			SolrDocument doc = this.docItr.next();
-
-			for (int i = 0; i < this.visitor.fieldNameList.size(); i++) {
-				// TODO handle multiple tables
-				columnName = this.visitor.getShortFieldName(i);
-
-				row.add(this.executionFactory.convertToTeiid(
-						doc.getFieldValue(columnName), this.expectedTypes[i]));
-			}
-
-			return row;
+			return null;
 		}
 		return null;
 	}
