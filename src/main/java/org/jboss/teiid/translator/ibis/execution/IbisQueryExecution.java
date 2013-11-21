@@ -1,17 +1,8 @@
 package org.jboss.teiid.translator.ibis.execution;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.resource.cci.ResultSet;
-
-//import org.apache.solr.client.solrj.SolrQuery;
-//import org.apache.solr.client.solrj.impl.HttpSolrServer;
-//import org.apache.solr.client.solrj.response.QueryResponse;
-//import org.apache.solr.common.SolrDocument;
-//import org.apache.solr.common.SolrDocumentList;
-import org.teiid.language.DerivedColumn;
 import org.teiid.language.QueryExpression;
 import org.teiid.language.Select;
 import org.teiid.logging.LogManager;
@@ -24,8 +15,8 @@ import org.jboss.teiid.translator.ibis.IbisConnection;
 import org.jboss.teiid.translator.ibis.IbisExecutionFactory;
 
 /**
- * @author Jason Marley
- * @author Syed Iqbal
+ * @author Jason Marley, Red Hat, Inc.
+ * @author Syed Iqbal, Red Hat, Inc.
  *
  */
 public class IbisQueryExecution implements ResultSetExecution {

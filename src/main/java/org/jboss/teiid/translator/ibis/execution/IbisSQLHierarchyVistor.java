@@ -44,7 +44,8 @@ import org.teiid.translator.utilities.IbisStringUtil;
 //import org.teiid.query.parser.Token;
 
 /**
- * @author student
+ * @author Jason Marley, Red Hat, Inc.
+ * @author Syed Iqbal, Red Hat, Inc.
  * 
  */
 public class IbisSQLHierarchyVistor extends HierarchyVisitor {
