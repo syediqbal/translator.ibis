@@ -11,7 +11,6 @@ import java.util.Map;
 
 import junit.framework.Assert;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.teiid.language.DerivedColumn;
 import org.teiid.metadata.Column;
@@ -27,64 +26,209 @@ public class ModelConverterImplTest {
     private List<DerivedColumn> derivedColumns = new ArrayList<DerivedColumn>();
     private JsonExtractor jsonExtractor = mock(JsonExtractor.class);
 
-    private String jsonDoc = "dummy_doc";
+    private String jsonDoc = "dummy_doc"; // mocking field retrieval. the string value here doesn't matter
 
-    @Before
-    public void setUp() throws Exception {
+    @Test
+    public void testConverter() throws TranslatorException, ConversionException {
 
-        DerivedColumn derivedColumn1 = mock(DerivedColumn.class);
-        DerivedColumn derivedColumn2 = mock(DerivedColumn.class);
-        DerivedColumn derivedColumn3 = mock(DerivedColumn.class);
-        when(derivedColumn1.toString()).thenReturn("id");
-        when(derivedColumn2.toString()).thenReturn("rev");
-        when(derivedColumn3.toString()).thenReturn("description");
-        derivedColumns.add(derivedColumn1);
-        derivedColumns.add(derivedColumn2);
-        derivedColumns.add(derivedColumn3);
+        DerivedColumn arrayColumn = mock(DerivedColumn.class);
+        DerivedColumn booleanColumn = mock(DerivedColumn.class);
+        DerivedColumn numberColumn = mock(DerivedColumn.class);
+        DerivedColumn objectColumn = mock(DerivedColumn.class);
+        DerivedColumn rickTextColumn = mock(DerivedColumn.class);
+        DerivedColumn stringColumn = mock(DerivedColumn.class);
+        when(arrayColumn.toString()).thenReturn("highlights");
+        when(booleanColumn.toString()).thenReturn("hasImage");
+        when(numberColumn.toString()).thenReturn("trt");
+        when(objectColumn.toString()).thenReturn("elements");
+        when(rickTextColumn.toString()).thenReturn("description");
+        when(stringColumn.toString()).thenReturn("id");
+        derivedColumns.add(arrayColumn);
+        derivedColumns.add(booleanColumn);
+        derivedColumns.add(numberColumn);
+        derivedColumns.add(objectColumn);
+        derivedColumns.add(rickTextColumn);
+        derivedColumns.add(stringColumn);
 
         Column column1 = mock(Column.class);
         Column column2 = mock(Column.class);
         Column column3 = mock(Column.class);
         Column column4 = mock(Column.class);
+        Column column5 = mock(Column.class);
+        Column column6 = mock(Column.class);
         when(column1.getRuntimeType()).thenReturn("string");
-        when(column2.getRuntimeType()).thenReturn("string");
-        when(column3.getRuntimeType()).thenReturn("string");
+        when(column2.getRuntimeType()).thenReturn("boolean");
+        when(column3.getRuntimeType()).thenReturn("float");
         when(column4.getRuntimeType()).thenReturn("string");
-        when(column1.getNativeType()).thenReturn("string");
-        when(column2.getNativeType()).thenReturn("string");
-        when(column3.getNativeType()).thenReturn(NativeTypes.RICH_TEXT.toString().toLowerCase());
-        when(column4.getNativeType()).thenReturn("string");
-        when(column1.getNameInSource()).thenReturn("_id");
-        when(column2.getNameInSource()).thenReturn("_rev");
-        when(column3.getNameInSource()).thenReturn("seo.description");
-        when(column4.getNameInSource()).thenReturn("slug");
+        when(column5.getRuntimeType()).thenReturn("string");
+        when(column6.getRuntimeType()).thenReturn("string");
+        when(column1.getNativeType()).thenReturn("array");
+        when(column2.getNativeType()).thenReturn("boolean");
+        when(column3.getNativeType()).thenReturn("number");
+        when(column4.getNativeType()).thenReturn("object");
+        when(column5.getNativeType()).thenReturn("rich_text");
+        when(column6.getNativeType()).thenReturn("string");
 
-        when(sourceModelMetadata.getColumn("id")).thenReturn(column1);
-        when(sourceModelMetadata.getColumn("rev")).thenReturn(column2);
-        when(sourceModelMetadata.getColumn("description")).thenReturn(column3);
+        when(column1.getNameInSource()).thenReturn("highlights");
+        when(column2.getNameInSource()).thenReturn("hasImage");
+        when(column3.getNameInSource()).thenReturn("trt");
+        when(column4.getNameInSource()).thenReturn("elements");
+        when(column5.getNameInSource()).thenReturn("seo.description");
+        when(column6.getNameInSource()).thenReturn("_id");
 
-        when(jsonExtractor.resolve(jsonDoc, "_id")).thenReturn("section_1");
-        when(jsonExtractor.resolve(jsonDoc, "_rev")).thenReturn("rev_1");
-        when(jsonExtractor.resolve(jsonDoc, "seo.description")).thenReturn("description_1");
+        when(sourceModelMetadata.getColumn("highlights")).thenReturn(column1);
+        when(sourceModelMetadata.getColumn("hasImage")).thenReturn(column2);
+        when(sourceModelMetadata.getColumn("trt")).thenReturn(column3);
+        when(sourceModelMetadata.getColumn("elements")).thenReturn(column4);
+        when(sourceModelMetadata.getColumn("description")).thenReturn(column5);
+        when(sourceModelMetadata.getColumn("id")).thenReturn(column6);
+
+        when(jsonExtractor.resolve(jsonDoc, "highlights")).thenReturn(new ArrayList<String>());
+        when(jsonExtractor.resolve(jsonDoc, "hasImage")).thenReturn(true);
+        when(jsonExtractor.resolve(jsonDoc, "trt")).thenReturn(2.34f);
+        when(jsonExtractor.resolve(jsonDoc, "elements")).thenReturn(new HashMap<String,Object>());
         Map<String, Object> description = new HashMap<String, Object>();
         description.put("paragraphs", new ArrayList<Object>());
         when(jsonExtractor.resolve(jsonDoc, "seo.description")).thenReturn(description);
+        when(jsonExtractor.resolve(jsonDoc, "_id")).thenReturn("section_1");
 
         converter = new ModelConverterImpl(sourceModelMetadata, derivedColumns, jsonExtractor);
+        List<?> row = converter.convertToTeiid(jsonDoc);
+
+        verify(jsonExtractor).resolve(jsonDoc, "highlights");
+        verify(jsonExtractor).resolve(jsonDoc, "hasImage");
+        verify(jsonExtractor).resolve(jsonDoc, "trt");
+        verify(jsonExtractor).resolve(jsonDoc, "elements");
+        verify(jsonExtractor).resolve(jsonDoc, "seo.description");
+        verify(jsonExtractor).resolve(jsonDoc, "_id");
+
+        Assert.assertEquals(6, row.size());
+        Assert.assertEquals("[]", row.get(0));
+        Assert.assertEquals(true, row.get(1));
+        Assert.assertTrue(2.34f - (Float)row.get(2) < 0.000001);
+        Assert.assertEquals("{}", row.get(3));
+        Assert.assertEquals("{paragraphs=[]}", row.get(4)); // TODO This is not the final stringified rich text we are going to store
+        Assert.assertEquals("section_1", row.get(5));
     }
 
     @Test
-    public void testConverter() throws TranslatorException, ConversionException {
+    public void testConverterNullValues() throws TranslatorException, ConversionException {
 
+        DerivedColumn arrayColumn = mock(DerivedColumn.class);
+        DerivedColumn booleanColumn = mock(DerivedColumn.class);
+        DerivedColumn numberColumn = mock(DerivedColumn.class);
+        DerivedColumn objectColumn = mock(DerivedColumn.class);
+        DerivedColumn rickTextColumn = mock(DerivedColumn.class);
+        DerivedColumn stringColumn = mock(DerivedColumn.class);
+        when(arrayColumn.toString()).thenReturn("highlights");
+        when(booleanColumn.toString()).thenReturn("hasImage");
+        when(numberColumn.toString()).thenReturn("trt");
+        when(objectColumn.toString()).thenReturn("elements");
+        when(rickTextColumn.toString()).thenReturn("description");
+        when(stringColumn.toString()).thenReturn("id");
+        derivedColumns.add(arrayColumn);
+        derivedColumns.add(booleanColumn);
+        derivedColumns.add(numberColumn);
+        derivedColumns.add(objectColumn);
+        derivedColumns.add(rickTextColumn);
+        derivedColumns.add(stringColumn);
+
+        Column column1 = mock(Column.class);
+        Column column2 = mock(Column.class);
+        Column column3 = mock(Column.class);
+        Column column4 = mock(Column.class);
+        Column column5 = mock(Column.class);
+        Column column6 = mock(Column.class);
+        when(column1.getRuntimeType()).thenReturn("string");
+        when(column2.getRuntimeType()).thenReturn("boolean");
+        when(column3.getRuntimeType()).thenReturn("float");
+        when(column4.getRuntimeType()).thenReturn("string");
+        when(column5.getRuntimeType()).thenReturn("string");
+        when(column6.getRuntimeType()).thenReturn("string");
+        when(column1.getNativeType()).thenReturn("array");
+        when(column2.getNativeType()).thenReturn("boolean");
+        when(column3.getNativeType()).thenReturn("number");
+        when(column4.getNativeType()).thenReturn("object");
+        when(column5.getNativeType()).thenReturn("rich_text");
+        when(column6.getNativeType()).thenReturn("string");
+
+        when(column1.getNameInSource()).thenReturn("highlights");
+        when(column2.getNameInSource()).thenReturn("hasImage");
+        when(column3.getNameInSource()).thenReturn("trt");
+        when(column4.getNameInSource()).thenReturn("elements");
+        when(column5.getNameInSource()).thenReturn("seo.description");
+        when(column6.getNameInSource()).thenReturn("_id");
+
+        when(sourceModelMetadata.getColumn("highlights")).thenReturn(column1);
+        when(sourceModelMetadata.getColumn("hasImage")).thenReturn(column2);
+        when(sourceModelMetadata.getColumn("trt")).thenReturn(column3);
+        when(sourceModelMetadata.getColumn("elements")).thenReturn(column4);
+        when(sourceModelMetadata.getColumn("description")).thenReturn(column5);
+        when(sourceModelMetadata.getColumn("id")).thenReturn(column6);
+
+        when(jsonExtractor.resolve(jsonDoc, "highlights")).thenReturn(null);
+        when(jsonExtractor.resolve(jsonDoc, "hasImage")).thenReturn(true);
+        when(jsonExtractor.resolve(jsonDoc, "trt")).thenReturn(2.34f);
+        when(jsonExtractor.resolve(jsonDoc, "elements")).thenReturn(null);
+        Map<String, Object> description = new HashMap<String, Object>();
+        description.put("paragraphs", new ArrayList<Object>());
+        when(jsonExtractor.resolve(jsonDoc, "seo.description")).thenReturn(description);
+        when(jsonExtractor.resolve(jsonDoc, "_id")).thenReturn(null);
+
+        converter = new ModelConverterImpl(sourceModelMetadata, derivedColumns, jsonExtractor);
         List<?> row = converter.convertToTeiid(jsonDoc);
 
-        verify(jsonExtractor).resolve(jsonDoc, "_id");
-        verify(jsonExtractor).resolve(jsonDoc, "_rev");
+        verify(jsonExtractor).resolve(jsonDoc, "highlights");
+        verify(jsonExtractor).resolve(jsonDoc, "hasImage");
+        verify(jsonExtractor).resolve(jsonDoc, "trt");
+        verify(jsonExtractor).resolve(jsonDoc, "elements");
         verify(jsonExtractor).resolve(jsonDoc, "seo.description");
+        verify(jsonExtractor).resolve(jsonDoc, "_id");
 
-        Assert.assertEquals(3, row.size());
-        Assert.assertEquals("section_1", row.get(0));
-        Assert.assertEquals("rev_1", row.get(1));
-        Assert.assertEquals("{paragraphs=[]}", row.get(2)); // TODO This is not the final stringified rich text we are going to store
+        Assert.assertEquals(6, row.size());
+        Assert.assertEquals(null, row.get(0));
+        Assert.assertEquals(true, row.get(1));
+        Assert.assertTrue(2.34f - (Float)row.get(2) < 0.000001);
+        Assert.assertEquals(null, row.get(3));
+        Assert.assertEquals("{paragraphs=[]}", row.get(4)); // TODO This is not the final stringified rich text we are going to store
+        Assert.assertEquals(null, row.get(5));
+    }
+
+    @Test(expected=ConversionException.class)
+    public void testIncompatibleArrayColumn() throws TranslatorException, ConversionException {
+        DerivedColumn arrayColumn = mock(DerivedColumn.class);
+        when(arrayColumn.toString()).thenReturn("highlights");
+        derivedColumns.add(arrayColumn);
+        Column column1 = mock(Column.class);
+        when(column1.getRuntimeType()).thenReturn("string");
+        when(column1.getNativeType()).thenReturn("array");
+        when(column1.getNameInSource()).thenReturn("highlights");
+        when(sourceModelMetadata.getColumn("highlights")).thenReturn(column1);
+        when(jsonExtractor.resolve(jsonDoc, "highlights")).thenReturn(42); // not a value array
+        converter = new ModelConverterImpl(sourceModelMetadata, derivedColumns, jsonExtractor);
+        converter.convertToTeiid(jsonDoc);
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void testNoConverterStrategyAvailable() throws TranslatorException, ConversionException {
+        DerivedColumn arrayColumn = mock(DerivedColumn.class);
+        when(arrayColumn.toString()).thenReturn("highlights");
+        derivedColumns.add(arrayColumn);
+        Column column1 = mock(Column.class);
+        when(column1.getRuntimeType()).thenReturn("string");
+        when(column1.getNativeType()).thenReturn("arrray"); // misspelled type
+        when(column1.getNameInSource()).thenReturn("highlights");
+        when(sourceModelMetadata.getColumn("highlights")).thenReturn(column1);
+        converter = new ModelConverterImpl(sourceModelMetadata, derivedColumns, jsonExtractor);
+        converter.convertToTeiid(jsonDoc);
+    }
+
+    @Test(expected=RuntimeException.class)
+    public void testConverterColumnNotFoundInMetadata() throws TranslatorException, ConversionException {
+        DerivedColumn arrayColumn = mock(DerivedColumn.class);
+        when(arrayColumn.toString()).thenReturn("highlights");
+        derivedColumns.add(arrayColumn);
+        converter = new ModelConverterImpl(sourceModelMetadata, derivedColumns, jsonExtractor);
+        converter.convertToTeiid(jsonDoc);
     }
 }
