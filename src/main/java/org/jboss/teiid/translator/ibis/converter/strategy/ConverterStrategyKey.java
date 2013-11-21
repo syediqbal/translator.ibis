@@ -1,4 +1,6 @@
-package org.jboss.teiid.translator.ibis.converter;
+package org.jboss.teiid.translator.ibis.converter.strategy;
+
+import org.jboss.teiid.translator.ibis.converter.NativeTypes;
 
 /**
  * This is the lookup key for the map that contains a number of converter

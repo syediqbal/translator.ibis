@@ -1,4 +1,7 @@
-package org.jboss.teiid.translator.ibis.converter;
+package org.jboss.teiid.translator.ibis.converter.strategy;
+
+import org.jboss.teiid.translator.ibis.converter.ConversionException;
+import org.jboss.teiid.translator.ibis.converter.NativeTypes;
 
 public class ObjectStrategy extends ConverterStrategy {
 

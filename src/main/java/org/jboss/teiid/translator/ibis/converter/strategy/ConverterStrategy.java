@@ -1,4 +1,7 @@
-package org.jboss.teiid.translator.ibis.converter;
+package org.jboss.teiid.translator.ibis.converter.strategy;
+
+import org.jboss.teiid.translator.ibis.converter.ConversionException;
+import org.jboss.teiid.translator.ibis.converter.NativeTypes;
 
 /**
  * ConverterStrategies are used by the model converter to canonicalize a
