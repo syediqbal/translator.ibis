@@ -71,9 +71,6 @@ public class ModelConverterImpl implements ModelConverter {
             if (sourceModelColumn == null) {
                 throw new RuntimeException("Cannot find in source model metadata a column named " + column);
             }
-            Object rawValue = jsonExtractor.resolve(
-                ibisModelJson,
-                sourceModelColumn.getNameInSource());
             ConverterStrategy strategy = findConverterStrategy(
                 sourceModelColumn.getRuntimeType(), sourceModelColumn.getNativeType());
             if (strategy == null) {
@@ -81,6 +78,9 @@ public class ModelConverterImpl implements ModelConverter {
                     sourceModelColumn.getRuntimeType() + " <= " +
                     sourceModelColumn.getNativeType() + "}");
             }
+            Object rawValue = jsonExtractor.resolve(
+                ibisModelJson,
+                sourceModelColumn.getNameInSource());
             Object convertedValue = strategy.convert(rawValue);
             row.add(convertedValue);
         }
@@ -95,8 +95,13 @@ public class ModelConverterImpl implements ModelConverter {
     }
 
     private ConverterStrategy findConverterStrategy(String teiidType, String ibisTypeStr) {
-        NativeTypes ibisType = NativeTypes.valueOf(ibisTypeStr.toUpperCase());
-        ConverterStrategyKey key = new ConverterStrategyKey(teiidType, ibisType);
-        return converterStrategies.get(key);
+        try {
+            NativeTypes ibisType = NativeTypes.valueOf(ibisTypeStr.toUpperCase());
+            ConverterStrategyKey key = new ConverterStrategyKey(teiidType, ibisType);
+            return converterStrategies.get(key);
+        }
+        catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 }
