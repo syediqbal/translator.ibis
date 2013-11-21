@@ -33,5 +33,19 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/saxonhe/9.2.1.5/saxonhe-9.2.1.5.jar"/>
+	<classpathentry kind="lib" path="lib/commons-httpclient-3.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang-2.6.jar"/>
+	<classpathentry kind="lib" path="lib/teiid-admin-8.2.0.Final-tests.jar"/>
+	<classpathentry kind="lib" path="lib/teiid-admin-8.2.0.Final.jar"/>
+	<classpathentry kind="lib" path="lib/teiid-client-8.2.0.Final-tests.jar"/>
+	<classpathentry kind="lib" path="lib/teiid-client-8.2.0.Final.jar"/>
+	<classpathentry kind="lib" path="lib/teiid-common-core-8.2.0.Final-tests.jar"/>
+	<classpathentry kind="lib" path="lib/teiid-common-core-8.2.0.Final.jar"/>
+	<classpathentry kind="lib" path="lib/teiid-engine-8.2.0.Final-tests.jar"/>
+	<classpathentry kind="lib" path="lib/teiid-engine-8.2.0.Final.jar"/>
+	<classpathentry kind="lib" path="lib/teiid-metadata-8.2.0.Final-tests.jar"/>
+	<classpathentry kind="lib" path="lib/teiid-metadata-8.2.0.Final.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/teiid-common-core"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
