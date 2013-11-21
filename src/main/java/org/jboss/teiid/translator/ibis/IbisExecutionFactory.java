@@ -5,24 +5,16 @@ import java.math.BigInteger;
 
 import javax.resource.cci.ConnectionFactory;
 
-import org.jboss.teiid.translator.ibis.execution.IbisConnection;
 import org.jboss.teiid.translator.ibis.execution.IbisQueryExecution;
-import org.jboss.teiid.translator.ibis.metadata.IbisMetadataProcessor;
-import org.teiid.core.types.BlobImpl;
-import org.teiid.core.types.InputStreamFactory;
 import org.teiid.language.QueryExpression;
-import org.teiid.language.Select;
-import org.teiid.logging.LogConstants;
 import org.teiid.logging.LogManager;
-import org.teiid.metadata.MetadataFactory;
 import org.teiid.metadata.RuntimeMetadata;
-import org.teiid.resource.spi.BasicConnectionFactory;
-import org.teiid.resource.spi.BasicManagedConnectionFactory;
 import org.teiid.translator.ExecutionContext;
 import org.teiid.translator.ExecutionFactory;
 import org.teiid.translator.ResultSetExecution;
 import org.teiid.translator.Translator;
 import org.teiid.translator.TranslatorException;
+import org.jboss.teiid.translator.ibis.IbisConnection;
 
 /**
  * Creates a execution factory
@@ -30,22 +22,9 @@ import org.teiid.translator.TranslatorException;
  * @author Jason Marley
  * 
  */
-@Translator(name = "solr", description = "A translator for Solr search platform")
+@Translator(name = "ibis", description = "A translator for Ibis web service api")
 public class IbisExecutionFactory extends
 		ExecutionFactory<ConnectionFactory, IbisConnection> {
-
-	@Override
-	public IbisConnection getConnection(ConnectionFactory factory,
-			ExecutionContext executionContext) throws TranslatorException {
-		// TODO Auto-generated method stub
-		return super.getConnection(factory, executionContext);
-	}
-
-	public IbisExecutionFactory() {
-		// connect to eis
-
-		// query eis
-	}
 
 	@Override
 	public void start() throws TranslatorException {
@@ -53,6 +32,19 @@ public class IbisExecutionFactory extends
 //		LogManager.logTrace(LogConstants.CTX_CONNECTOR,
 //				"Solr Executionfactory Started");
 	}
+//	@Override
+//	public IbisConnection getConnection(ConnectionFactory factory,
+//			ExecutionContext executionContext) throws TranslatorException {
+//		// TODO Auto-generated method stub
+//		return super.getConnection(factory, executionContext);
+//	}
+//
+//	public IbisExecutionFactory() {
+//		// connect to eis
+//
+//		// query eis
+//	}
+
 
 	@Override
 	public ResultSetExecution createResultSetExecution(QueryExpression command,

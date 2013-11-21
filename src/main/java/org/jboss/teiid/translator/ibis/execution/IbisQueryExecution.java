@@ -20,7 +20,7 @@ import org.teiid.translator.DataNotAvailableException;
 import org.teiid.translator.ExecutionContext;
 import org.teiid.translator.ResultSetExecution;
 import org.teiid.translator.TranslatorException;
-import org.jboss.teiid.translator.ibis.execution.IbisConnection;
+import org.jboss.teiid.translator.ibis.IbisConnection;
 import org.jboss.teiid.translator.ibis.IbisExecutionFactory;
 
 public class IbisQueryExecution implements ResultSetExecution {
@@ -43,7 +43,7 @@ public class IbisQueryExecution implements ResultSetExecution {
 
 	public IbisQueryExecution(QueryExpression command,
 			ExecutionContext executionContext, RuntimeMetadata metadata,
-			SolrConnection connection) {
+			IbisConnection connection) {
 		this.metadata = metadata;
 		this.query = (Select) command;
 		this.executionContext = executionContext;
